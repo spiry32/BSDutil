@@ -5,6 +5,7 @@ import (
 	"os/exec"
 
 	"github.com/rivo/tview"
+	"github.com/gdamore/tcell/v2"
 )
 
 var apps = []string{"neofetch", "vim", "nano", "firefox"}
