@@ -40,10 +40,12 @@ func main() {
 		appName := apps[index]
 		if _, ok := selected[index]; ok {
 			delete(selected, index)
-			list.SetItemText(index, mainText, "", '0'+rune(index))
+			list.RemoveItem(index)
+			list.InsertItem(index, mainText, "", '0'+rune(index), nil)
 		} else {
 			selected[index] = appName
-			list.SetItemText(index, mainText, "[green]+", '0'+rune(index))
+			list.RemoveItem(index)
+			list.InsertItem(index, mainText, "[green]+", '0'+rune(index), nil)
 		}
 	})
 
