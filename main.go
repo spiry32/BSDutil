@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
@@ -46,16 +45,6 @@ func main() {
 			selected[index] = appName
 			list.SetSecondaryText(index, "[green]+")
 		}
-	})
-
-	list.SetMouseCapture(func(event *tcell.EventMouse) *tcell.EventMouse {
-		if event.Action() == tcell.MouseLeftClick {
-			_, _, _, itemIndex := list.GetSelection()
-			if itemIndex >= 0 && itemIndex < len(apps) {
-				list.GetSelectedFunc()(itemIndex, apps[itemIndex], "", ' ')
-			}
-		}
-		return event
 	})
 
 	okButton := tview.NewButton("OK").SetSelectedFunc(func() {
