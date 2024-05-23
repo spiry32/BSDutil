@@ -65,7 +65,24 @@ func main() {
 		AddItem(okButton, 0, 1, false).
 		AddItem(cancelButton, 0, 1, false)
 
-	if err := app.SetRoot(flex, true).Run(); err != nil {
+	// Navigare cu săgețile stânga/dreapta
+	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		switch event.Key() {
+		case tcell.KeyRight:
+			if app.GetFocus() == list {
+				app.SetFocus(okButton)
+				return nil
+			}
+		case tcell.KeyLeft:
+			if app.GetFocus() == cancelButton {
+				app.SetFocus(okButton)
+				return nil
+			}
+		}
+		return event
+	})
+
+	if err := app.SetRoot(flex, true).SetFocus(list).Run(); err != nil {
 		panic(err)
 	}
 }
