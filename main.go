@@ -45,16 +45,22 @@ func main() {
 		}
 	})
 
-	installButton := tview.NewButton("Install").SetSelectedFunc(func() {
+	okButton := tview.NewButton("OK").SetSelectedFunc(func() {
 		if len(selected) > 0 {
 			installApplications(selected)
 			app.Stop()
 		}
 	})
 
+	cancelButton := tview.NewButton("CANCEL").SetSelectedFunc(func() {
+		app.Stop()
+	})
+
 	flex := tview.NewFlex().
 		AddItem(list, 0, 1, true).
-		AddItem(installButton, 1, 0, false)
+		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
+			AddItem(okButton, 0, 1, false).
+			AddItem(cancelButton, 0, 1, false), 1, 0, false)
 
 	if err := app.SetRoot(flex, true).Run(); err != nil {
 		panic(err)
