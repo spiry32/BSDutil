@@ -29,7 +29,7 @@ func main() {
 
 	for i, appName := range apps {
 		item := fmt.Sprintf("[%d] %s", i+1, appName)
-		if err := list.AddItem(item, "", 0, nil); err != nil {
+		if err := list.AddItem(item, "", '0'+rune(i), nil); err != nil {
 			fmt.Printf("Failed to add item %s: %v\n", appName, err)
 		}
 	}
@@ -40,10 +40,10 @@ func main() {
 		appName := apps[index]
 		if _, ok := selected[index]; ok {
 			delete(selected, index)
-			list.SetSecondaryText(index, "")
+			list.SetItemText(index, mainText, "", '0'+rune(index))
 		} else {
 			selected[index] = appName
-			list.SetSecondaryText(index, "[green]+")
+			list.SetItemText(index, mainText, "[green]+", '0'+rune(index))
 		}
 	})
 
