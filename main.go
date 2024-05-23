@@ -73,6 +73,7 @@ func main() {
 					list.SetCurrentItem(index)
 				}
 			case '\n':
+				fmt.Println("Enter pressed") // verificare
 				if len(selected) > 0 {
 					installApplications(selected)
 					app.Stop()
