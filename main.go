@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os/exec"
 
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
@@ -25,12 +26,14 @@ func installApplications(selected map[int]string) {
 func main() {
 	app := tview.NewApplication()
 
-	list := tview.NewList().
-		AddItem("neofetch", "", '1', nil).
-		AddItem("vim", "", '2', nil).
-		AddItem("nano", "", '3', nil).
-		AddItem("firefox", "", '4', nil).
-		AddItem("firefox-esr", "", '5', nil)
+	list := tview.NewList()
+
+	for i, appName := range apps {
+		item := fmt.Sprintf("[%d] %s", i+1, appName)
+		if err := list.AddItem(item, "", 0, nil); err != nil {
+			fmt.Printf("Failed to add item %s: %v\n", appName, err)
+		}
+	}
 
 	selected := make(map[int]string)
 
@@ -43,6 +46,16 @@ func main() {
 			selected[index] = appName
 			list.SetSecondaryText(index, "[green]+")
 		}
+	})
+
+	list.SetMouseCapture(func(event *tcell.EventMouse) *tcell.EventMouse {
+		if event.Action() == tcell.MouseLeftClick {
+			_, _, _, itemIndex := list.GetSelection()
+			if itemIndex >= 0 && itemIndex < len(apps) {
+				list.GetSelectedFunc()(itemIndex, apps[itemIndex], "", ' ')
+			}
+		}
+		return event
 	})
 
 	okButton := tview.NewButton("OK").SetSelectedFunc(func() {
@@ -58,9 +71,8 @@ func main() {
 
 	flex := tview.NewFlex().
 		AddItem(list, 0, 1, true).
-		AddItem(tview.NewFlex().SetDirection(tview.FlexRow).
-			AddItem(okButton, 0, 1, false).
-			AddItem(cancelButton, 0, 1, false), 1, 0, false)
+		AddItem(okButton, 0, 1, false).
+		AddItem(cancelButton, 0, 1, false)
 
 	if err := app.SetRoot(flex, true).Run(); err != nil {
 		panic(err)
