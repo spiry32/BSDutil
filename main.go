@@ -46,7 +46,7 @@ func main() {
 		} else {
 			selected[index] = appName
 			list.RemoveItem(index)
-			list.InsertItem(index, mainText, "[green]+", '0'+rune(index), nil)
+			list.InsertItem(index, mainText, "", '0'+rune(index), nil)
 		}
 	})
 
@@ -63,20 +63,21 @@ func main() {
 
 	flex := tview.NewFlex().
 		AddItem(list, 0, 1, true).
+		AddItem(nil, 0, 1, false).
 		AddItem(okButton, 0, 1, false).
 		AddItem(cancelButton, 0, 1, false)
 
 	// Navigare cu săgețile stânga/dreapta
 	app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
-		case tcell.KeyRight:
+		case tcell.KeyDown:
 			if app.GetFocus() == list {
 				app.SetFocus(okButton)
 				return nil
 			}
-		case tcell.KeyLeft:
-			if app.GetFocus() == cancelButton {
-				app.SetFocus(okButton)
+		case tcell.KeyUp:
+			if app.GetFocus() == okButton {
+				app.SetFocus(list)
 				return nil
 			}
 		}
