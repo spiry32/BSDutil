@@ -10,8 +10,12 @@ import (
 
 var apps = []string{"neofetch", "vim", "nano", "firefox"}
 
-func installApplications(selected []int) {
-	for _, index := range selected {
+func installApplications(selected map[int]struct{}) {
+	selectedIndexes := make([]int, 0, len(selected))
+	for index := range selected {
+		selectedIndexes = append(selectedIndexes, index)
+	}
+	for _, index := range selectedIndexes {
 		app := apps[index]
 		fmt.Printf("Installing %s...\n", app)
 		cmd := exec.Command("sudo", "pkg", "install", "-y", app)
@@ -69,29 +73,17 @@ func main() {
 					list.SetCurrentItem(index)
 				}
 			case '\n':
-				selectedIndexes := make([]int, 0, len(selected))
-				for index := range selected {
-					selectedIndexes = append(selectedIndexes, index)
+				if len(selected) > 0 {
+					installApplications(selected)
+					app.Stop()
 				}
-				installApplications(selectedIndexes)
-				app.Stop()
 			}
 		}
 		return event
 	})
 
-	installButton := tview.NewButton("Install").SetSelectedFunc(func() {
-		selectedIndexes := make([]int, 0, len(selected))
-		for index := range selected {
-			selectedIndexes = append(selectedIndexes, index)
-		}
-		installApplications(selectedIndexes)
-		app.Stop()
-	})
-
 	flex := tview.NewFlex().SetDirection(tview.FlexRow).
-		AddItem(list, 0, 1, true).
-		AddItem(installButton, 1, 0, false)
+		AddItem(list, 0, 1, true)
 
 	if err := app.SetRoot(flex, true).Run(); err != nil {
 		panic(err)
