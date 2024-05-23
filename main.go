@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.com/rivo/tview"
 	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
 )
 
 var apps = []string{"neofetch", "vim", "nano", "firefox"}
@@ -43,9 +43,10 @@ func main() {
 	}
 
 	list.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
-		if event.Key() == tcell.KeyRune {
-			r := event.Rune()
-			if r == ' ' {
+		switch event.Key() {
+		case tcell.KeyRune:
+			switch event.Rune() {
+			case ' ':
 				index := list.GetCurrentItem()
 				if _, ok := selected[index]; ok {
 					delete(selected, index)
@@ -53,7 +54,21 @@ func main() {
 					selected[index] = struct{}{}
 				}
 				updateList(list, selected)
-			} else if r == '\n' {
+			case 'j', 'J', 's', 'S':
+				// tasta "j" sau "s" pentru deplasare în jos
+				index := list.GetCurrentItem()
+				if index < len(apps)-1 {
+					index++
+					list.SetCurrentItem(index)
+				}
+			case 'k', 'K', 'w', 'W':
+				// tasta "k" sau "w" pentru deplasare în sus
+				index := list.GetCurrentItem()
+				if index > 0 {
+					index--
+					list.SetCurrentItem(index)
+				}
+			case '\n':
 				selectedIndexes := make([]int, 0, len(selected))
 				for index := range selected {
 					selectedIndexes = append(selectedIndexes, index)
