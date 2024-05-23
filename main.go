@@ -83,6 +83,14 @@ func main() {
 		return event
 	})
 
+	// Handler pentru butonul "OK" și "CANCEL"
+	okButton.SetDoneFunc(func(key tcell.Key) {
+		app.Stop()
+	})
+	cancelButton.SetDoneFunc(func(key tcell.Key) {
+		app.Stop()
+	})
+
 	if err := app.SetRoot(flex, true).SetFocus(list).Run(); err != nil {
 		panic(err)
 	}
