@@ -41,13 +41,27 @@ func main() {
 		})
 	}
 
-	list.SetSelectedFunc(func(index int, mainText, secondaryText string, shortcut rune) {
-		if _, ok := selected[index]; ok {
-			delete(selected, index)
-		} else {
-			selected[index] = struct{}{}
+	list.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if event.Key() == tcell.KeyRune {
+			r := event.Rune()
+			if r == ' ' {
+				index := list.GetCurrentItem()
+				if _, ok := selected[index]; ok {
+					delete(selected, index)
+				} else {
+					selected[index] = struct{}{}
+				}
+				updateList(list, selected)
+			} else if r == '\n' {
+				selectedIndexes := make([]int, 0, len(selected))
+				for index := range selected {
+					selectedIndexes = append(selectedIndexes, index)
+				}
+				installApplications(selectedIndexes)
+				app.Stop()
+			}
 		}
-		updateList(list, selected)
+		return event
 	})
 
 	installButton := tview.NewButton("Install").SetSelectedFunc(func() {
