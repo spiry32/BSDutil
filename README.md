@@ -31,3 +31,7 @@ STEP 3
 ./faebsd
 ```
 
+## Tested on
+
+GhostBSD
+
